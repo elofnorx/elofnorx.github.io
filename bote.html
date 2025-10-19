@@ -1,28 +1,38 @@
-<html>
+<!DOCTYPE html>
+<html lang="tr">
 <head>
-<meta charset="utf-8">
-<title>HTML5 ÖRNEĞİ</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Programcılığı Testi</title>
 </head>
 <body>
-<header>
-<h1>HTML5 TAGLARI< Başlık 1/h1>
-<p>Bu sayfa farklı tarayıcılarda denenmelidir.</p>
-</header>
-<nav>
-<ul>
-<li><a href="https://validator.w3.org/">HTML kodununun uygunluğunu test edin</a></li>
-<li><a href="https://jsfiddle.net/">HTML kodlarınızı deneyin</a></li>
-<li><a href="https://www.000webhost.com">Sunucuda deneme yapın </a></li>
-</ul></nav>
-<article>
-<section>
-<p>Article birden fazla section içerebilir.</p>
-</section>
-</article>
-<aside>
-<p>aside kısmı</p>
-</aside>
-<footer>
-<p>Hacettepe Üniversitesi-footer</p>
-</footer>
+  <h1>Web Programcılığı Testi</h1>
+  <form action="#" method="post">
+    <p>1. HTML’in açılımı nedir?</p>
+    <input type="radio" name="q1" value="A"> Hyper Text Markup Language<br>
+    <input type="radio" name="q1" value="B"> High Tech Machine Language<br>
+    <input type="radio" name="q1" value="C"> Hyperlinks and Text Markup Language<br><br>
+
+    <p>2. Aşağıdaki input türlerinden hangisi sayı girişi sağlar?</p>
+    <select name="q2">
+      <option value="text">text</option>
+      <option value="number">number</option>
+      <option value="date">date</option>
+      <option value="email">email</option>
+    </select><br><br>
+
+    <p>3. Web formunda birden fazla dosya yüklemek için hangi tür kullanılır?</p>
+    <input type="checkbox" name="q3" value="file"> input type="file"<br>
+    <input type="checkbox" name="q3" value="email"> input type="email"<br><br>
+
+    <p>4. 1 ile 10 arasında puan verin:</p>
+    <input type="range" name="puan" min="1" max="10"><br><br>
+
+    <p>5. Kısa yorumunuzu yazınız:</p>
+    <textarea name="yorum" rows="3" cols="40"></textarea><br><br>
+
+    <input type="submit" value="Gönder">
+    <input type="reset" value="Temizle">
+  </form>
 </body>
+</html>
