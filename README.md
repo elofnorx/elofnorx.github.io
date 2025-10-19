@@ -1,5 +1,5 @@
-# elofnorx.github.io
-# Kişisel Web Sitesi
+# ELİFNUR BAĞCI
+#2230780056
 
-[kullanııc adı ](https://elofnorx.github.io/kullaniciadi.html)
+[kullanıcı veri girişi ](https://elofnorx.github.io/kullaniciadi.html)
 [Test Sayfası](https://elofnorx.github.io/text.html)
