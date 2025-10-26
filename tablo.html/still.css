@@ -1,0 +1,51 @@
+/* BÖLÜM 3: EXTERNAL CSS
+    Bu stiller SADECE "tablo-external" ID'sine sahip 3. tabloyu etkiler.
+    Ayrı bir .css dosyasına yazılır.
+*/
+
+/* 3. Tablo (External CSS) Stilleri - MAVİ TEMA */
+#tablo-external {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: separate; /* Farklı görünmesi için 'separate' kullanalım */
+    border-spacing: 0;
+    font-size: 14px;
+    border: 2px solid #007BFF; /* Mavi dış çerçeve */
+    border-radius: 10px; /* Köşeleri yuvarlat */
+    overflow: hidden; /* Yuvarlatmanın düzgün görünmesi için */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#tablo-external th {
+    background-color: #007BFF; /* Mavi Başlık */
+    color: white;
+    padding: 12px;
+}
+
+/* Sadece <thead> içindeki <th> lara etki etsin */
+#tablo-external thead th {
+    border-bottom: 2px solid #0056b3;
+}
+
+
+#tablo-external td {
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #e0e0e0; /* Satır arası çizgiler */
+}
+
+#tablo-external tbody tr {
+    background-color: #ffffff;
+}
+
+#tablo-external tbody tr:hover {
+    background-color: #e6f7ff; /* Fare üzerine gelince vurgula */
+}
+
+#tablo-external td:first-child {
+    font-weight: bold;
+    color: #0056b3;
+    width: 10%;
+    background-color: #f0f8ff;
+}
