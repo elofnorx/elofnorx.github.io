@@ -6,3 +6,6 @@
 
 
 [ders programı tablosu ](https://elofnorx.github.io/tablo.html/).
+
+
+[venn şeması](https://elofnorx.github.io/vennsema.html)
