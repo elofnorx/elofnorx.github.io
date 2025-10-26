@@ -3,3 +3,6 @@
 
 [kullanıcı veri girişi ](https://elofnorx.github.io/kullaniciadi.html)
 [Test Sayfası](https://elofnorx.github.io/text.html)
+
+
+[ders programı tablosu ](https://elofnorx.github.io/tablo.html/).
