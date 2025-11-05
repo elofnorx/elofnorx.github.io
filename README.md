@@ -9,3 +9,7 @@
 
 
 [venn şeması](https://elofnorx.github.io/vennsema.html)
+
+[yüzharaket](https://elofnorx.github.io/vennsema.html)
+
+
