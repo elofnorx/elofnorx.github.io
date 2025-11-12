@@ -12,6 +12,6 @@
 
 [yüzharaket](https://elofnorx.github.io/hareket.html)
 
-[kart](https://elofnorx.github.io/fifacard.html)
+[kart](https://elofnorx.github.io/fifacard.html/fifakart.html)
 
 
