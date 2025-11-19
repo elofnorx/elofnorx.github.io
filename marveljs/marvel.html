@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Marvel Pixel Galeri</title>
+
+<style>
+
+  body {
+    background-color: #f0f8ff; 
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 20px;
+    transition: background-color 0.8s ease; 
+  }
+
+  
+  h1 {
+    margin-top: 30px;
+    margin-bottom: 50px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 3px solid #333;
+    display: inline-block;
+    padding-bottom: 10px;
+  }
+
+
+  #randomImage {
+    display: block; 
+    margin: 0 auto 50px auto; 
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    background-color: white;
+    border: 8px solid #333; 
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.2); 
+    image-rendering: pixelated;
+  }
+
+  
+  .galeri {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  
+  .kutu {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    border: 1px solid #ddd;
+  }
+
+  .kutu:hover {
+    transform: translateY(-5px);
+  }
+
+  .kutu img {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 15px;
+    image-rendering: pixelated;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+  }
+
+  
+  button {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: inherit; 
+    font-weight: bold;
+    border: 2px solid #333;
+    background-color: transparent;
+    transition: all 0.3s;
+    margin: 0 5px;
+    font-size: 14px;
+  }
+
+  
+  button.gizle-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+  }
+
+  
+  button.goster-btn:hover {
+    background-color: #2ecc71;
+    color: white;
+    border-color: #2ecc71;
+  }
+
+</style>
+</head>
+
+<body>
+
+  <h1>Günün Kahramanı</h1>
+
+ 
+  <img id="randomImage" src="" alt="Şanslı Karakter">
+
+  <div class="galeri">
+
+    <div class="kutu">
+      <img id="resim1" src="marvel.jpg" alt="Marvel">
+     
+      <button class="gizle-btn" onclick="document.getElementById('resim1').style.visibility='hidden'">GİZLE</button>
+      <button class="goster-btn" onclick="document.getElementById('resim1').style.visibility='visible'">GÖSTER</button>
+    </div>
+
+  
+    <div class="kutu">
+      <img id="resim2" src="avengers.jpg" alt="Avengers">
+      <button class="gizle-btn" onclick="document.getElementById('resim2').style.visibility='hidden'">GİZLE</button>
+      <button class="goster-btn" onclick="document.getElementById('resim2').style.visibility='visible'">GÖSTER</button>
+    </div>
+
+ 
+    <div class="kutu">
+      <img id="resim3" src="a.jpg" alt="Logo">
+      <button class="gizle-btn" onclick="document.getElementById('resim3').style.visibility='hidden'">GİZLE</button>
+      <button class="goster-btn" onclick="document.getElementById('resim3').style.visibility='visible'">GÖSTER</button>
+    </div>
+
+  </div>
+
+<script>
+  
+ 
+  var resimler = [
+    'ironman.jpg', 'hulk.jpg', 'ca.jpg', 'loki.jpg', 'karadul.jpg',
+    'witch.jpg', 'Nick Fury.jpg', 'rakun.jpg', 'groot.jpg', 'indir (7).jpg'
+  ];
+
+  
+  function rastgeleRenk() {
+    var r = Math.floor(Math.random() * 156 + 100);
+    var g = Math.floor(Math.random() * 156 + 100);
+    var b = Math.floor(Math.random() * 156 + 100);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function baslangicAyarlari() {
+   
+    var index = Math.floor(Math.random() * resimler.length);
+    var secilenResim = resimler[index];
+    
+    var imgElement = document.getElementById("randomImage");
+    imgElement.src = secilenResim;
+    
+   
+    document.body.style.backgroundColor = rastgeleRenk();
+  }
+
+ 
+  window.onload = baslangicAyarlari;
+
+</script>
+
+</body>
+</html>
