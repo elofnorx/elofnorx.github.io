@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Futbol</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #202020;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Press Start 2P', cursive; 
+            color: white;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        canvas {
+            display: block;
+            background-color: #4CAF50;
+            image-rendering: pixelated; 
+        }
+
+        .scoreboard {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+            font-size: 24px;
+            text-shadow: 2px 2px 0 #000;
+            z-index: 10;
+        }
+
+        .team-blue { color: #3498db; }
+        .team-red { color: #e74c3c; }
+
+        #goal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            display: none;
+        }
+
+        .goal-text {
+            font-size: 60px;
+            color: #f1c40f;
+            margin-bottom: 20px;
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .controls {
+            margin-top: 10px;
+            font-size: 10px;
+            color: #aaa;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div class="scoreboard">
+            <div class="team-blue">MAVI <span id="scoreBlue">0</span></div>
+            <div class="team-red"><span id="scoreRed">0</span> KIRMIZI</div>
+        </div>
+
+        <div id="goal-overlay">
+            <div class="goal-text">GOOL!</div>
+            <div id="scorer-name" style="font-size: 20px;"></div>
+        </div>
+
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+    </div>
+
+    <div class="controls">
+        <p>Mavi: W-A-S-D | Kırmızı: OK TUŞLARI</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+     
+        const GAME_WIDTH = 800;
+        const GAME_HEIGHT = 500;
+        const GOAL_WIDTH = 140;
+        
+       
+        const FRICTION = 0.98;
+        const PLAYER_SPEED = 4;
+        const KICK_POWER = 1.2;
+        
+       
+        const PLAYER_RADIUS = 20; 
+        const BALL_RADIUS = 8;
+
+        let isGoal = false;
+        let scores = { blue: 0, red: 0 };
+
+        const keys = {
+            w: false, a: false, s: false, d: false,
+            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
+        };
+
+        const ball = {
+            x: GAME_WIDTH / 2,
+            y: GAME_HEIGHT / 2,
+            dx: 0,
+            dy: 0
+        };
+
+        const player1 = { 
+            x: 150,
+            y: GAME_HEIGHT / 2,
+            dx: 0, dy: 0,
+            color: '#3498db',
+            skin: '#ffdbac',
+            hair: '#e67e22',
+            team: 'blue'
+        };
+
+        const player2 = { 
+            x: GAME_WIDTH - 150,
+            y: GAME_HEIGHT / 2,
+            dx: 0, dy: 0,
+            color: '#e74c3c',
+            skin: '#f1c27d',
+            hair: '#2c3e50',
+            team: 'red'
+        };
+
+        
+
+        window.addEventListener('keydown', (e) => {
+            if(keys.hasOwnProperty(e.key)) keys[e.key] = true;
+           
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if(keys.hasOwnProperty(e.key)) keys[e.key] = false;
+        });
+
+      
+
+        function update() {
+            if(isGoal) return;
+
+           
+            player1.dx = 0; player1.dy = 0;
+            if (keys.w) player1.dy = -PLAYER_SPEED;
+            if (keys.s) player1.dy = PLAYER_SPEED;
+            if (keys.a) player1.dx = -PLAYER_SPEED;
+            if (keys.d) player1.dx = PLAYER_SPEED;
+
+           
+            player2.dx = 0; player2.dy = 0;
+            if (keys.ArrowUp) player2.dy = -PLAYER_SPEED;
+            if (keys.ArrowDown) player2.dy = PLAYER_SPEED;
+            if (keys.ArrowLeft) player2.dx = -PLAYER_SPEED;
+            if (keys.ArrowRight) player2.dx = PLAYER_SPEED;
+
+          
+            [player1, player2].forEach(p => {
+                p.x += p.dx;
+                p.y += p.dy;
+
+               
+                if (p.x < PLAYER_RADIUS) p.x = PLAYER_RADIUS;
+                if (p.x > GAME_WIDTH - PLAYER_RADIUS) p.x = GAME_WIDTH - PLAYER_RADIUS;
+                if (p.y < PLAYER_RADIUS) p.y = PLAYER_RADIUS;
+                if (p.y > GAME_HEIGHT - PLAYER_RADIUS) p.y = GAME_HEIGHT - PLAYER_RADIUS;
+            });
+
+           
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+            
+            ball.dx *= FRICTION;
+            ball.dy *= FRICTION;
+
+            
+            if (Math.abs(ball.dx) < 0.05) ball.dx = 0;
+            if (Math.abs(ball.dy) < 0.05) ball.dy = 0;
+
+            
+            if (ball.y < BALL_RADIUS) { ball.y = BALL_RADIUS; ball.dy *= -1; }
+            if (ball.y > GAME_HEIGHT - BALL_RADIUS) { ball.y = GAME_HEIGHT - BALL_RADIUS; ball.dy *= -1; }
+
+           
+            const goalTop = (GAME_HEIGHT - GOAL_WIDTH) / 2;
+            const goalBottom = goalTop + GOAL_WIDTH;
+
+            
+            if (ball.x < BALL_RADIUS) {
+                if (ball.y > goalTop && ball.y < goalBottom) {
+                    handleGoal('red');
+                } else {
+                    ball.x = BALL_RADIUS;
+                    ball.dx *= -0.8; 
+                }
+            }
+            
+            
+            if (ball.x > GAME_WIDTH - BALL_RADIUS) {
+                if (ball.y > goalTop && ball.y < goalBottom) {
+                    handleGoal('blue');
+                } else {
+                    ball.x = GAME_WIDTH - BALL_RADIUS;
+                    ball.dx *= -0.8;
+                }
+            }
+
+            
+            [player1, player2].forEach(player => {
+                
+                const dx = ball.x - player.x;
+                const dy = ball.y - player.y;
+                const distance = Math.sqrt(dx*dx + dy*dy);
+                const minDist = PLAYER_RADIUS + BALL_RADIUS;
+
+                if (distance < minDist) {
+                    
+                    const angle = Math.atan2(dy, dx);
+                    
+                    
+                    const overlap = minDist - distance;
+                    ball.x += Math.cos(angle) * overlap;
+                    ball.y += Math.sin(angle) * overlap;
+
+                    
+                    const playerSpeed = Math.sqrt(player.dx*player.dx + player.dy*player.dy);
+                    const force = 5 + (playerSpeed * KICK_POWER); 
+
+                    ball.dx = Math.cos(angle) * force;
+                    ball.dy = Math.sin(angle) * force;
+                }
+            });
+        }
+
+        function handleGoal(team) {
+            isGoal = true;
+            const overlay = document.getElementById('goal-overlay');
+            const scorerName = document.getElementById('scorer-name');
+            
+            overlay.style.display = 'flex';
+            
+            if (team === 'blue') {
+                scores.blue++;
+                document.getElementById('scoreBlue').innerText = scores.blue;
+                scorerName.innerText = "MAVI TAKIM ATTI!";
+                scorerName.style.color = "#3498db";
+            } else {
+                scores.red++;
+                document.getElementById('scoreRed').innerText = scores.red;
+                scorerName.innerText = "KIRMIZI TAKIM ATTI!";
+                scorerName.style.color = "#e74c3c";
+            }
+
+            setTimeout(() => {
+                resetPositions();
+                overlay.style.display = 'none';
+            }, 2000);
+        }
+
+        function resetPositions() {
+            ball.x = GAME_WIDTH / 2;
+            ball.y = GAME_HEIGHT / 2;
+            ball.dx = 0; ball.dy = 0;
+
+            player1.x = 150; player1.y = GAME_HEIGHT / 2;
+            player2.x = GAME_WIDTH - 150; player2.y = GAME_HEIGHT / 2;
+            
+            isGoal = false;
+        }
+
+     
+
+       
+        function drawPixelPlayer(ctx, player) {
+            const x = player.x;
+            const y = player.y;
+            const s = 3; 
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            
+            const offsetX = -3.5 * s;
+            const offsetY = -6 * s;
+
+          
+            ctx.beginPath();
+            ctx.ellipse(0, 5, 12, 6, 0, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fill();
+
+            
+            
+          
+            ctx.fillStyle = '#111'; 
+            let legOffset = (Math.abs(player.dx) + Math.abs(player.dy)) > 0 ? Math.sin(Date.now() / 100) * 2 : 0;
+            ctx.fillRect((-3 * s), (5 * s) + legOffset, 2 * s, 2 * s);
+            ctx.fillRect((1 * s), (5 * s) - legOffset, 2 * s, 2 * s);
+
+            
+            ctx.fillStyle = '#222'; 
+            ctx.fillRect(-3 * s, 2 * s, 6 * s, 3 * s);
+
+           
+            ctx.fillStyle = player.color;
+            ctx.fillRect(-4 * s, -2 * s, 8 * s, 5 * s);
+            
+            
+            ctx.fillStyle = player.color; 
+            ctx.fillRect(-5 * s, -1 * s, 1.5 * s, 3 * s); 
+            ctx.fillRect(3.5 * s, -1 * s, 1.5 * s, 3 * s); 
+            
+            ctx.fillStyle = player.skin;
+            ctx.fillRect(-5 * s, 2 * s, 1.5 * s, 1.5 * s); 
+            ctx.fillRect(3.5 * s, 2 * s, 1.5 * s, 1.5 * s); 
+           
+            ctx.fillStyle = player.skin;
+            ctx.fillRect(-3 * s, -6 * s, 6 * s, 5 * s);
+
+            
+            ctx.fillStyle = '#000';
+            ctx.fillRect(-1.5 * s, -4 * s, 1 * s, 1 * s);
+            ctx.fillRect(1.5 * s, -4 * s, 1 * s, 1 * s); 
+
+          
+            ctx.fillStyle = player.hair;
+            ctx.fillRect(-3.5 * s, -7 * s, 7 * s, 2 * s); 
+            ctx.fillRect(-3.5 * s, -6 * s, 1 * s, 3 * s); 
+            ctx.fillRect(2.5 * s, -6 * s, 1 * s, 3 * s); 
+
+            ctx.restore();
+        }
+
+        function drawBall() {
+            ctx.save();
+            ctx.translate(ball.x, ball.y);
+       
+            const rotation = (ball.x + ball.y) * 0.1;
+            ctx.rotate(rotation);
+
+           
+            ctx.beginPath();
+            ctx.arc(0, 0, BALL_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(0, 0, BALL_RADIUS/2, 0, Math.PI*2);
+            ctx.fill();
+            
+            
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(-2, -2, 2, 0, Math.PI*2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawPitch() {
+           
+            const stripeW = 50;
+            for(let i=0; i<GAME_WIDTH; i+=stripeW) {
+                ctx.fillStyle = (i/stripeW)%2 === 0 ? '#4CAF50' : '#43A047';
+                ctx.fillRect(i, 0, stripeW, GAME_HEIGHT);
+            }
+
+            
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 3;
+            
+           
+            ctx.beginPath();
+            ctx.moveTo(GAME_WIDTH/2, 0);
+            ctx.lineTo(GAME_WIDTH/2, GAME_HEIGHT);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(GAME_WIDTH/2, GAME_HEIGHT/2, 60, 0, Math.PI*2);
+            ctx.stroke();
+
+            
+            const boxH = 220;
+            const boxW = 80;
+            const boxY = (GAME_HEIGHT - boxH) / 2;
+            
+            ctx.strokeRect(0, boxY, boxW, boxH);
+            ctx.strokeRect(GAME_WIDTH-boxW, boxY, boxW, boxH);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            const goalY = (GAME_HEIGHT - GOAL_WIDTH) / 2;
+            ctx.fillRect(0, goalY, 10, GOAL_WIDTH);
+            ctx.fillRect(GAME_WIDTH-10, goalY, 10, GOAL_WIDTH);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawPitch();
+            
+            
+            drawPixelPlayer(ctx, player1);
+            drawPixelPlayer(ctx, player2);
+            
+            
+            drawBall();
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+
+    </script>
+</body>
+</html>
